@@ -21,7 +21,6 @@ GitHub Pages でそのまま公開できる静的 HTML アプリです。
 
 - ルート URL の `index.html` からアプリ本体へ自動で移動します。
 - アプリ本体は `app.html` です。
-- 旧 URL の `ダブルス記録.html` へアクセスした場合も `app.html` に転送されます。
 
 ## 注意
 
