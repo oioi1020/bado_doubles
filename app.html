@@ -1460,7 +1460,6 @@
         <div class="stats-grid">
           <div class="chart-shell wide" id="statsPlayerTrends"></div>
           <div class="chart-shell wide" id="statsPlayerBreakdown"></div>
-          <div class="chart-shell" id="statsPlayTrends"></div>
           <div class="chart-shell wide" id="statsMatchScores"></div>
         </div>
       </section>
@@ -1699,7 +1698,6 @@
       recentRecords: document.getElementById('recentRecords'),
       playerTotals: document.getElementById('playerTotals'),
       statsScopeSelect: document.getElementById('statsScopeSelect'),
-      statsPlayTrends: document.getElementById('statsPlayTrends'),
       statsPlayerTrends: document.getElementById('statsPlayerTrends'),
       statsPlayerBreakdown: document.getElementById('statsPlayerBreakdown'),
       statsMatchScores: document.getElementById('statsMatchScores'),
@@ -2552,7 +2550,6 @@
       const stats = buildStats(scope.records);
       renderStatsPlayerComparison(scope, stats);
       renderStatsPlayerBreakdown(scope, stats);
-      renderStatsPlayTrends(scope, stats);
       renderStatsMatchScores(scope);
     }
 
@@ -2602,22 +2599,6 @@
       }
       records.forEach((record) => add(record.player));
       return players;
-    }
-
-    function renderStatsPlayTrends(scope, stats) {
-      const plays = getStatsPlayOrder(stats);
-      const rows = plays.map((play, index) => {
-        const entry = stats.byPlay.get(play) || emptyStats();
-        return {
-          name: play,
-          point: entry.point,
-          lost: entry.lost,
-          total: entry.point + entry.lost,
-          index,
-        };
-      }).sort((a, b) => (b.total - a.total) || (a.index - b.index));
-
-      renderTrendChart(els.statsPlayTrends, '種別全体 得点/失点', rows, formatPlayLabel);
     }
 
     function getStatsPlayOrder(stats) {
