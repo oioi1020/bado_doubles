@@ -2427,6 +2427,9 @@
 
       const match = getActiveMatch();
       const scoreTimeline = buildRecordScoreTimeline(match, records);
+      const displayedRecords = records
+        .map((record, index) => ({ record, index, score: scoreTimeline[index] || { a: 0, b: 0 } }))
+        .reverse();
 
       els.recentRecords.innerHTML = `
         <table class="recent-table">
@@ -2442,10 +2445,9 @@
             </tr>
           </thead>
           <tbody>
-            ${records.map((record, index) => {
+            ${displayedRecords.map(({ record, index, score }) => {
               const normalized = normalizeRecordClassification(record);
               const replayMeta = getRecordReplayMeta(normalized);
-              const score = scoreTimeline[index] || { a: 0, b: 0 };
               return `
                 <tr>
                   <td class="number">${index + 1}</td>
