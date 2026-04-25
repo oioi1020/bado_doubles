@@ -1482,6 +1482,12 @@
           </div>
           <div class="settings-block">
             <div class="settings-head">
+              <h2>動画リンク設定</h2>
+            </div>
+            <div class="settings-body" id="replayOffsetSettings"></div>
+          </div>
+          <div class="settings-block">
+            <div class="settings-head">
               <h2>試合データ</h2>
             </div>
             <div class="settings-body">
@@ -1570,7 +1576,7 @@
     const STORAGE_KEY = 'badminton-scorebook-html-v1';
     const PRIVACY_NOTICE_KEY = 'badminton-scorebook-privacy-notice-v1';
     const MATCH_PLAYER_SLOTS = 4;
-    const VIDEO_REPLAY_OFFSET_SECONDS = 3;
+    const DEFAULT_VIDEO_REPLAY_OFFSET_SECONDS = 5;
     const VIDEO_PLAYER_IFRAME_ID = 'videoPlayerFrame';
     const DEFAULT_PLAYERS = ['プレーヤー1', 'プレーヤー2', 'プレーヤー3', 'プレーヤー4'];
     const DEFAULT_PLAYS = [
@@ -1666,6 +1672,7 @@
       pointReasonSettings: document.getElementById('pointReasonSettings'),
       lostReasonSettings: document.getElementById('lostReasonSettings'),
       clearAllMatchesButton: document.getElementById('clearAllMatchesButton'),
+      replayOffsetSettings: document.getElementById('replayOffsetSettings'),
       undoRecordButton: document.getElementById('undoRecordButton'),
       importJsonButton: document.getElementById('importJsonButton'),
       importFile: document.getElementById('importFile'),
@@ -1727,6 +1734,7 @@
               groupId: fallbackGroupId,
               date: toDateInputValue(new Date()),
               players: getDefaultMatchPlayers(players),
+              videoUrl: '',
             }];
         const parsedActiveMatch = matches.find((match) => match.id === parsed.activeMatchId);
         const parsedActiveGroupId = matchGroups.some((group) => group.id === parsed.activeGroupId)
@@ -1742,6 +1750,7 @@
           plays,
           customPointReasons,
           customLostReasons,
+          videoReplayOffsetSeconds: normalizeReplayOffsetSeconds(parsed.videoReplayOffsetSeconds),
           matchGroups,
           matches,
           activeGroupId,
@@ -1765,12 +1774,14 @@
         groupId: group.id,
         date: toDateInputValue(new Date()),
         players: getDefaultMatchPlayers(DEFAULT_PLAYERS),
+        videoUrl: '',
       };
       return {
         players: DEFAULT_PLAYERS.slice(),
         plays: DEFAULT_PLAYS.slice(),
         customPointReasons: [],
         customLostReasons: [],
+        videoReplayOffsetSeconds: DEFAULT_VIDEO_REPLAY_OFFSET_SECONDS,
         matchGroups: [group],
         matches: [match],
         activeGroupId: group.id,
@@ -1801,6 +1812,12 @@
         seen.add(item);
       });
       return result;
+    }
+
+    function normalizeReplayOffsetSeconds(value) {
+      const parsed = Number(value);
+      if (!Number.isFinite(parsed)) return DEFAULT_VIDEO_REPLAY_OFFSET_SECONDS;
+      return Math.max(0, Math.min(300, Math.round(parsed)));
     }
 
     function ensureDefaultPlays(plays) {
@@ -2243,11 +2260,9 @@
       const major = tree.find((item) => item.label === inputState.major);
       if (!major) {
         inputState.major = '';
-        inputState.middle = '';
-        inputState.small = '';
       }
-      const pointOptions = major ? POINT_SMALL_OPTIONS.map((item) => ({ label: item, value: item })) : [];
-      const lostOptions = major ? LOST_SMALL_OPTIONS.map((item) => ({ label: item, value: item })) : [];
+      const pointOptions = POINT_SMALL_OPTIONS.map((item) => ({ label: item, value: item }));
+      const lostOptions = LOST_SMALL_OPTIONS.map((item) => ({ label: item, value: item }));
       if (!pointOptions.some((item) => item.value === inputState.middle)) {
         inputState.middle = '';
       }
@@ -3020,6 +3035,20 @@
         button.addEventListener('click', () => exportJson(Number(button.dataset.exportJsonGroup)));
       });
 
+      els.replayOffsetSettings.innerHTML = `
+        <div class="form-row">
+          <label for="replayOffsetInput">動画リンク</label>
+          <input id="replayOffsetInput" type="number" min="0" max="300" step="1" value="${escapeAttr(state.videoReplayOffsetSeconds)}" aria-describedby="replayOffsetHelp">
+        </div>
+        <div class="course-note" id="replayOffsetHelp">記録ボタンを押した時点から何秒前の動画位置を保存するかを設定します。初期値は 5 秒です。</div>
+      `;
+      els.replayOffsetSettings.querySelector('#replayOffsetInput').addEventListener('change', (event) => {
+        const nextValue = normalizeReplayOffsetSeconds(event.target.value);
+        state.videoReplayOffsetSeconds = nextValue;
+        event.target.value = String(nextValue);
+        saveState();
+      });
+
       els.playList.innerHTML = state.plays
         .map((play) => `<div class="play-pill">${escapeHtml(play)}</div>`)
         .join('');
@@ -3366,7 +3395,8 @@
         };
       }
 
-      const targetSeconds = Math.max(0, Math.floor(currentSeconds - VIDEO_REPLAY_OFFSET_SECONDS));
+      const offsetSeconds = normalizeReplayOffsetSeconds(state.videoReplayOffsetSeconds);
+      const targetSeconds = Math.max(0, Math.floor(currentSeconds - offsetSeconds));
       const replayVideo = buildYouTubeVideoMeta(baseVideo.videoId, targetSeconds);
       return {
         videoUrl: baseVideo.watchUrl,
@@ -3834,6 +3864,7 @@
         plays: state.plays,
         customPointReasons: state.customPointReasons,
         customLostReasons: state.customLostReasons,
+        videoReplayOffsetSeconds: state.videoReplayOffsetSeconds,
         matchGroups: [bundle.group],
         matches: bundle.matches,
         activeGroupId: bundle.group.id,
@@ -3892,6 +3923,9 @@
         state.customLostReasons.concat(normalizeOptionalList(imported.customLostReasons)),
         DEFAULT_LOST_SMALL_OPTIONS
       );
+      if (Object.prototype.hasOwnProperty.call(imported, 'videoReplayOffsetSeconds')) {
+        state.videoReplayOffsetSeconds = normalizeReplayOffsetSeconds(imported.videoReplayOffsetSeconds);
+      }
       refreshReasonOptions(state.customPointReasons, state.customLostReasons);
 
       const fallbackGroups = [{ id: makeId('G'), name: '読み込みグループ' }];
