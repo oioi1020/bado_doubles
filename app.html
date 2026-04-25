@@ -1612,7 +1612,7 @@
     const STORAGE_KEY = 'badminton-scorebook-html-v1';
     const PRIVACY_NOTICE_KEY = 'badminton-scorebook-privacy-notice-v1';
     const MATCH_PLAYER_SLOTS = 4;
-    const DEFAULT_VIDEO_REPLAY_OFFSET_SECONDS = 5;
+    const DEFAULT_VIDEO_REPLAY_OFFSET_SECONDS = 10;
     const VIDEO_PLAYER_IFRAME_ID = 'videoPlayerFrame';
     const DEFAULT_PLAYERS = ['プレーヤー1', 'プレーヤー2', 'プレーヤー3', 'プレーヤー4'];
     const DEFAULT_PLAYS = [
@@ -3088,7 +3088,7 @@
           <label for="replayOffsetInput">動画リンク</label>
           <input id="replayOffsetInput" type="number" min="0" max="300" step="1" value="${escapeAttr(state.videoReplayOffsetSeconds)}" aria-describedby="replayOffsetHelp">
         </div>
-        <div class="course-note" id="replayOffsetHelp">記録ボタンを押した時点から何秒前の動画位置を保存するかを設定します。初期値は 5 秒です。</div>
+        <div class="course-note" id="replayOffsetHelp">記録ボタンを押した時点から何秒前の動画位置を保存するかを設定します。初期値は 10 秒です。</div>
       `;
       els.replayOffsetSettings.querySelector('#replayOffsetInput').addEventListener('change', (event) => {
         const nextValue = normalizeReplayOffsetSeconds(event.target.value);
