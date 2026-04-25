@@ -118,7 +118,8 @@
     }
 
     select,
-    input[type="text"] {
+    input[type="text"],
+    input[type="url"] {
       min-height: 38px;
       border: 1px solid var(--line);
       border-radius: 8px;
@@ -128,7 +129,8 @@
     }
 
     .topbar select,
-    .topbar input[type="text"] {
+    .topbar input[type="text"],
+    .topbar input[type="url"] {
       min-width: min(360px, 72vw);
       border-color: rgba(255, 255, 255, 0.28);
       box-shadow: 0 5px 18px rgba(0, 0, 0, 0.14);
@@ -426,53 +428,60 @@
     }
 
     .input-flow {
-      min-width: 780px;
       display: grid;
-      grid-template-columns: minmax(120px, 0.75fr) minmax(260px, 1.6fr) minmax(110px, 0.7fr) minmax(170px, 1fr) minmax(90px, 0.55fr);
-      gap: 1px;
-      background: var(--line);
+      gap: 10px;
+      padding: 10px;
+      background: #f8fafc;
     }
 
     .selector-column {
-      min-height: 360px;
       display: grid;
       grid-template-rows: auto 1fr;
+      border: 1px solid var(--line);
+      border-radius: 8px;
       background: #fff;
+      overflow: hidden;
     }
 
     .selector-column h3 {
       margin: 0;
-      padding: 10px;
+      padding: 7px 9px;
       border-bottom: 1px solid var(--line);
       background: #edf2f8;
-      font-size: 13px;
+      font-size: 11px;
       line-height: 1.2;
     }
 
     .selector-list {
       display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       align-content: start;
-      gap: 6px;
-      padding: 8px;
-      max-height: 440px;
+      gap: 4px;
+      padding: 5px;
+      max-height: 176px;
       overflow-y: auto;
     }
 
+    .selector-list.level-player {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
     .selector-list.level-major {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      max-height: 248px;
     }
 
     .selector-option {
       width: 100%;
-      min-height: 36px;
+      min-height: 30px;
       border-radius: 8px;
-      padding: 7px 9px;
+      padding: 5px 6px;
       color: var(--ink);
       background: #fff;
       border: 1px solid var(--line);
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 900;
-      line-height: 1.2;
+      line-height: 1.15;
       text-align: left;
       overflow-wrap: anywhere;
     }
@@ -485,17 +494,18 @@
 
     .result-actions {
       display: grid;
-      gap: 8px;
-      padding: 8px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 5px;
+      padding: 5px;
       align-content: start;
     }
 
     .result-button {
-      min-height: 54px;
+      min-height: 44px;
       border-radius: 8px;
       display: grid;
       place-items: center;
-      font-size: 24px;
+      font-size: 18px;
       font-weight: 950;
     }
 
@@ -512,19 +522,24 @@
     }
 
     .selection-chip {
-      min-height: 36px;
+      min-height: 30px;
       display: grid;
       align-content: center;
       gap: 2px;
       border-radius: 8px;
-      padding: 7px 9px;
+      padding: 5px 6px;
       color: var(--muted);
       background: #f8fafc;
       border: 1px dashed var(--line);
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 900;
       line-height: 1.2;
       overflow-wrap: anywhere;
+    }
+
+    .selector-list .selection-chip,
+    .result-actions .selection-chip {
+      grid-column: 1 / -1;
     }
 
     .player-total {
@@ -534,10 +549,89 @@
 
     .recent-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
+      grid-template-columns: 1fr;
       gap: 14px;
       margin-top: 14px;
       align-items: start;
+    }
+
+    .history-scroll {
+      max-height: min(70vh, 960px);
+      overflow: auto;
+    }
+
+    .record-workspace {
+      display: grid;
+      grid-template-columns: minmax(300px, 380px) minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .record-main {
+      min-width: 0;
+    }
+
+    .video-shell {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .video-panel {
+      display: grid;
+      gap: 12px;
+      padding: 12px;
+      position: sticky;
+      top: 18px;
+    }
+
+    .video-form {
+      display: grid;
+      gap: 10px;
+    }
+
+    .video-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .video-help {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      font-weight: 800;
+    }
+
+    .video-link {
+      color: var(--brand-2);
+    }
+
+    .video-frame iframe {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: 0;
+      border-radius: 8px;
+      background: #000;
+      display: block;
+    }
+
+    .video-empty {
+      min-height: 220px;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      color: var(--muted);
+      background: #f8fafc;
+      font-size: 13px;
+      line-height: 1.5;
+      font-weight: 800;
+      text-align: center;
     }
 
     .recent-table td,
@@ -895,6 +989,23 @@
       border-color: #f2b8bd;
     }
 
+    details.breakdown-item > summary {
+      list-style: none;
+      cursor: pointer;
+    }
+
+    details.breakdown-item > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.breakdown-item[open] .breakdown-row.point {
+      box-shadow: inset 0 0 0 1px #8ec7a6;
+    }
+
+    details.breakdown-item[open] .breakdown-row.lost {
+      box-shadow: inset 0 0 0 1px #e4a5ac;
+    }
+
     .breakdown-play {
       font-size: 11px;
       line-height: 1.15;
@@ -942,6 +1053,34 @@
       color: var(--muted);
       font-size: 10px;
       font-weight: 900;
+    }
+
+    .breakdown-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 0 8px 8px;
+    }
+
+    .breakdown-link {
+      min-height: 34px;
+      border-radius: 14px;
+      padding: 6px 10px;
+      display: inline-grid;
+      gap: 2px;
+      justify-items: start;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      font-size: 11px;
+      font-weight: 900;
+      text-align: left;
+    }
+
+    .breakdown-link-meta {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
     }
 
     .number {
@@ -1100,6 +1239,16 @@
       display: none;
     }
 
+    @media (max-width: 1180px) {
+      .record-workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .video-panel {
+        position: static;
+      }
+    }
+
     @media (max-width: 860px) {
       .topbar-inner {
         grid-template-columns: 1fr;
@@ -1120,6 +1269,11 @@
         grid-template-columns: 1fr;
       }
 
+      .selector-list,
+      .result-actions {
+        grid-template-columns: 1fr;
+      }
+
     }
 
     @media (max-width: 560px) {
@@ -1137,7 +1291,8 @@
       }
 
       .topbar select,
-      .topbar input[type="text"] {
+      .topbar input[type="text"],
+      .topbar input[type="url"] {
         min-width: 100%;
       }
 
@@ -1212,28 +1367,46 @@
           <div class="participant-grid" id="participantSelectors"></div>
         </div>
 
-        <div class="board-shell">
-          <div class="toolbar">
-            <h2 id="boardTitle">入力</h2>
-            <div class="toolbar-actions">
-              <button class="text-button plain" id="undoRecordButton" type="button">1つ戻す</button>
+        <div class="record-workspace">
+          <div class="record-main">
+            <div class="board-shell">
+              <div class="toolbar">
+                <h2 id="boardTitle">入力</h2>
+                <div class="toolbar-actions">
+                  <button class="text-button plain" id="undoRecordButton" type="button">1つ戻す</button>
+                </div>
+              </div>
+              <div class="scroll-x" id="recordBoard"></div>
             </div>
           </div>
-          <div class="scroll-x" id="recordBoard"></div>
+
+          <aside class="video-shell">
+            <div class="toolbar">
+              <h2>動画</h2>
+            </div>
+            <div class="video-panel">
+              <form class="video-form" id="videoForm">
+                <div class="field">
+                  <label for="videoUrlInput">YouTube URL</label>
+                  <input id="videoUrlInput" type="url" inputmode="url" autocomplete="off" placeholder="https://www.youtube.com/watch?v=...">
+                </div>
+                <div class="video-actions">
+                  <button class="text-button primary" type="submit">表示</button>
+                  <button class="text-button plain" id="clearVideoButton" type="button">クリア</button>
+                </div>
+              </form>
+              <p class="video-help" id="videoStatus">YouTubeのURLを入力すると、この試合にひもづけて表示できます。</p>
+              <div id="videoEmbed"></div>
+            </div>
+          </aside>
         </div>
 
         <div class="recent-layout">
           <div class="table-shell">
             <div class="toolbar">
-              <h2>最近の記録</h2>
+              <h2>全プレー記録</h2>
             </div>
-            <div class="scroll-x" id="recentRecords"></div>
-          </div>
-          <div class="table-shell">
-            <div class="toolbar">
-              <h2>プレーヤー別</h2>
-            </div>
-            <div id="playerTotals"></div>
+            <div class="scroll-x history-scroll" id="recentRecords"></div>
           </div>
         </div>
       </section>
@@ -1370,6 +1543,8 @@
   <script>
     const STORAGE_KEY = 'badminton-scorebook-html-v1';
     const MATCH_PLAYER_SLOTS = 4;
+    const VIDEO_REPLAY_OFFSET_SECONDS = 3;
+    const VIDEO_PLAYER_IFRAME_ID = 'videoPlayerFrame';
     const DEFAULT_PLAYERS = ['プレーヤー1', 'プレーヤー2', 'プレーヤー3', 'プレーヤー4'];
     const DEFAULT_PLAYS = [
       'ストレートスマッシュ',
@@ -1434,6 +1609,12 @@
       small: '',
     };
 
+    let youtubePlayer = null;
+    let youtubeApiRequested = false;
+    let youtubeApiReady = false;
+    let pendingVideoSeekSeconds = null;
+    let mountedVideoKey = '';
+
     const state = loadState();
 
     const els = {
@@ -1479,6 +1660,11 @@
       editCourseField: document.getElementById('editCourseField'),
       editCourse: document.getElementById('editCourse'),
       editResult: document.getElementById('editResult'),
+      videoForm: document.getElementById('videoForm'),
+      videoUrlInput: document.getElementById('videoUrlInput'),
+      clearVideoButton: document.getElementById('clearVideoButton'),
+      videoStatus: document.getElementById('videoStatus'),
+      videoEmbed: document.getElementById('videoEmbed'),
       cancelEditButton: document.getElementById('cancelEditButton'),
       saveEditButton: document.getElementById('saveEditButton'),
     };
@@ -1672,6 +1858,9 @@
         play,
         result,
         course: normalizeCourseName(play, course, result, true),
+        videoUrl: String(record.videoUrl || '').trim(),
+        videoSnapshotUrl: String(record.videoSnapshotUrl || '').trim(),
+        videoSeconds: Number.isFinite(Number(record.videoSeconds)) ? Math.max(0, Number(record.videoSeconds)) : null,
       };
     }
 
@@ -1706,6 +1895,7 @@
         groupId,
         date: match && match.date ? String(match.date) : toDateInputValue(new Date()),
         players: normalizeMatchPlayers(match ? match.players : [], players),
+        videoUrl: match && typeof match.videoUrl === 'string' ? match.videoUrl.trim() : '',
       };
     }
 
@@ -1824,10 +2014,16 @@
       els.statsScopeSelect.addEventListener('change', renderStatistics);
 
       els.recentRecords.addEventListener('click', handleRecordAction);
+      els.statsPlayerBreakdown.addEventListener('click', handleRecordAction);
       els.clearAllMatchesButton.addEventListener('click', clearAllMatches);
       els.undoRecordButton.addEventListener('click', undoLastRecord);
       els.importJsonButton.addEventListener('click', () => els.importFile.click());
       els.importFile.addEventListener('change', importJson);
+      els.videoForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        saveActiveMatchVideo();
+      });
+      els.clearVideoButton.addEventListener('click', clearActiveMatchVideo);
       els.editForm.addEventListener('submit', (event) => {
         event.preventDefault();
         saveEditedRecord();
@@ -1901,15 +2097,14 @@
     function renderRecordView() {
       const match = getActiveMatch();
       const records = getActiveRecords();
-      const stats = buildStats(records);
       const group = getActiveGroup();
       els.boardTitle.textContent = match ? `${group ? `${group.name} / ` : ''}${match.name}` : '入力';
       els.undoRecordButton.disabled = records.length === 0;
       renderPairScores(records);
       renderParticipantSelectors();
-      renderBoard(stats);
+      renderBoard();
+      renderMatchVideo();
       renderRecentRecords(records);
-      renderPlayerTotals(stats);
     }
 
     function renderPairScores(records) {
@@ -2118,28 +2313,37 @@
     }
 
     function renderRecentRecords(records) {
-      const recent = records.slice(-10).reverse();
-      if (recent.length === 0) {
+      if (records.length === 0) {
         els.recentRecords.innerHTML = '<div class="empty">記録なし</div>';
         return;
       }
+
+      const match = getActiveMatch();
+      const scoreTimeline = buildRecordScoreTimeline(match, records);
 
       els.recentRecords.innerHTML = `
         <table class="recent-table">
           <thead>
             <tr>
+              <th>No.</th>
+              <th>スコア</th>
               <th>操作</th>
               <th>時刻</th>
               <th>プレーヤー</th>
               <th>プレー</th>
               <th>結果</th>
+              <th>動画</th>
             </tr>
           </thead>
           <tbody>
-            ${recent.map((record) => {
+            ${records.map((record, index) => {
               const normalized = normalizeRecordClassification(record);
+              const replayMeta = getRecordReplayMeta(normalized);
+              const score = scoreTimeline[index] || { a: 0, b: 0 };
               return `
                 <tr>
+                  <td class="number">${index + 1}</td>
+                  <td class="number">${score.a} - ${score.b}</td>
                   <td>
                     <div class="record-actions">
                       <button class="mini-button plain" type="button" data-action="edit" data-id="${escapeAttr(record.id)}">修正</button>
@@ -2150,6 +2354,7 @@
                   <td>${escapeHtml(normalized.player)}</td>
                   <td>${escapeHtml(formatRecordPlay(normalized))}</td>
                   <td>${escapeHtml(normalized.result)}</td>
+                  <td>${replayMeta}</td>
                 </tr>
               `;
             }).join('')}
@@ -2158,10 +2363,45 @@
       `;
     }
 
+    function buildRecordScoreTimeline(match, records) {
+      const pairs = getPairsForMatch(match);
+      const pairA = new Set(pairs.a);
+      const pairB = new Set(pairs.b);
+      let scoreA = 0;
+      let scoreB = 0;
+
+      return records.map((record) => {
+        const normalized = normalizeRecordClassification(record);
+        const isPairA = pairA.has(normalized.player);
+        const isPairB = pairB.has(normalized.player);
+
+        if ((isPairA && normalized.result === '得点') || (isPairB && normalized.result === '失点')) {
+          scoreA += 1;
+        }
+        if ((isPairB && normalized.result === '得点') || (isPairA && normalized.result === '失点')) {
+          scoreB += 1;
+        }
+
+        return { a: scoreA, b: scoreB };
+      });
+    }
+
     function formatRecordPlay(record) {
       const play = normalizePlayName(record.play);
       const course = normalizeCourseName(play, record.course, record.result, true);
       return course ? `${play} / ${course}` : play;
+    }
+
+    function getRecordReplayMeta(record) {
+      if (typeof record.videoSeconds !== 'number' || !Number.isFinite(record.videoSeconds) || record.videoSeconds < 0) {
+        return '<span class="course-note">-</span>';
+      }
+      return `
+        <div class="record-actions">
+          <button class="mini-button plain" type="button" data-action="replay" data-id="${escapeAttr(record.id)}">${escapeHtml(formatVideoSeekTime(record.videoSeconds))}</button>
+          ${record.videoSnapshotUrl ? `<button class="mini-button plain" type="button" data-action="open-video" data-id="${escapeAttr(record.id)}">開く</button>` : ''}
+        </div>
+      `;
     }
 
     function renderPlayerTotals(stats) {
@@ -2340,13 +2580,13 @@
         </div>
         <div class="chart-body">
           <div class="breakdown-grid">
-            ${scope.players.map((player) => playerBreakdownHtml(player, stats, maxValue, plays)).join('')}
+            ${scope.players.map((player) => playerBreakdownHtml(player, scope, stats, maxValue, plays)).join('')}
           </div>
         </div>
       `;
     }
 
-    function playerBreakdownHtml(player, stats, maxValue, plays) {
+    function playerBreakdownHtml(player, scope, stats, maxValue, plays) {
       const playerStats = stats.byPlayer.get(player) || emptyStats();
       const rows = plays.flatMap((play, index) => {
         const courseOptions = getCourseOptions(play);
@@ -2356,6 +2596,7 @@
             const entry = stats.byPlayerPlayCourse.get(statsKey(player, play, course.value)) || emptyStats();
             return {
               play,
+              course: course.value,
               labelHtml: `${formatPlayLabel(play)}<br><span class="course-note">${escapeHtml(course.value)}</span>`,
               point: entry.point,
               lost: entry.lost,
@@ -2374,6 +2615,7 @@
           if (unclassified.point + unclassified.lost > 0) {
             courseRows.push({
               play,
+              course: '__unclassified__',
               labelHtml: `${formatPlayLabel(play)}<br><span class="course-note">未分類</span>`,
               point: unclassified.point,
               lost: unclassified.lost,
@@ -2386,6 +2628,7 @@
         const entry = stats.byPlayerPlay.get(statsKey(player, play)) || emptyStats();
         return [{
           play,
+          course: '',
           labelHtml: formatPlayLabel(play),
           point: entry.point,
           lost: entry.lost,
@@ -2404,8 +2647,8 @@
             <span class="breakdown-total">+${playerStats.point} / -${playerStats.lost}</span>
           </div>
           <div class="breakdown-sections">
-            ${breakdownSectionHtml('得点', '+', 'point', pointRows, playerStats.point, maxValue)}
-            ${breakdownSectionHtml('失点', '-', 'lost', lostRows, playerStats.lost, maxValue)}
+            ${breakdownSectionHtml(scope, player, '得点', '+', 'point', pointRows, playerStats.point, maxValue)}
+            ${breakdownSectionHtml(scope, player, '失点', '-', 'lost', lostRows, playerStats.lost, maxValue)}
           </div>
         </div>
       `;
@@ -2418,7 +2661,7 @@
         .sort((a, b) => (b.value - a.value) || (a.index - b.index));
     }
 
-    function breakdownSectionHtml(title, sign, kind, rows, total, maxValue) {
+    function breakdownSectionHtml(scope, player, title, sign, kind, rows, total, maxValue) {
       return `
         <section class="breakdown-section ${kind}">
           <div class="breakdown-section-title">
@@ -2426,27 +2669,74 @@
             <span>${total}</span>
           </div>
           <div class="breakdown-list">
-            ${rows.length > 0 ? rows.map((row) => breakdownResultHtml(row, maxValue)).join('') : `<div class="breakdown-empty">${title}なし</div>`}
+            ${rows.length > 0 ? rows.map((row) => breakdownResultHtml(scope, player, row, maxValue)).join('') : `<div class="breakdown-empty">${title}なし</div>`}
           </div>
         </section>
       `;
     }
 
-    function breakdownResultHtml(row, maxValue) {
+    function breakdownResultHtml(scope, player, row, maxValue) {
       const label = row.kind === 'point' ? '+' : '-';
       const width = Math.round((row.value / maxValue) * 100);
+      const relatedRecords = findBreakdownRecords(scope, player, row);
       return `
-        <div class="breakdown-row ${row.kind}">
-          <div class="breakdown-play">${row.labelHtml}</div>
-          <div class="breakdown-value ${row.kind}">
-            <span class="breakdown-sign">${label}</span>
-            <div class="trend-track">
-              <div class="trend-bar ${row.kind}" style="width: ${width}%"></div>
+        <details class="breakdown-item">
+          <summary class="breakdown-row ${row.kind}">
+            <div class="breakdown-play">${row.labelHtml}</div>
+            <div class="breakdown-value ${row.kind}">
+              <span class="breakdown-sign">${label}</span>
+              <div class="trend-track">
+                <div class="trend-bar ${row.kind}" style="width: ${width}%"></div>
+              </div>
+              <span class="number">${row.value}</span>
             </div>
-            <span class="number">${row.value}</span>
-          </div>
+          </summary>
+          ${breakdownRecordLinksHtml(relatedRecords)}
+        </details>
+      `;
+    }
+
+    function findBreakdownRecords(scope, player, row) {
+      return scope.records
+        .map((record) => normalizeRecordClassification(record))
+        .filter((record) => {
+          if (record.player !== player) return false;
+          if (record.play !== row.play) return false;
+          if (record.result !== (row.kind === 'point' ? '得点' : '失点')) return false;
+          if (row.course === '__unclassified__') return !record.course;
+          if (row.course) return record.course === row.course;
+          return true;
+        });
+    }
+
+    function breakdownRecordLinksHtml(records) {
+      if (records.length === 0) {
+        return '<div class="breakdown-links"><span class="course-note">リンクなし</span></div>';
+      }
+      return `
+        <div class="breakdown-links">
+          ${records.map((record) => `
+            <button class="breakdown-link" type="button" data-action="open-video" data-id="${escapeAttr(record.id)}">
+              <span>${escapeHtml(formatBreakdownReplayLabel(record))}</span>
+              <span class="breakdown-link-meta">${escapeHtml(formatBreakdownReplayMeta(record))}</span>
+            </button>
+          `).join('')}
         </div>
       `;
+    }
+
+    function formatBreakdownReplayLabel(record) {
+      if (typeof record.videoSeconds === 'number' && Number.isFinite(record.videoSeconds)) {
+        return formatVideoSeekTime(record.videoSeconds);
+      }
+      return formatTime(record.timestamp);
+    }
+
+    function formatBreakdownReplayMeta(record) {
+      const match = state.matches.find((item) => item.id === record.matchId);
+      const score = getScoreAtRecord(record);
+      const scoreLabel = score ? `${score.a} - ${score.b}` : '-';
+      return `${match ? match.name : '試合'} / ${scoreLabel}`;
     }
 
     function playerInsightBadgesHtml(row, maxPoint, maxLost, avgTotal) {
@@ -2747,6 +3037,7 @@
         groupId: group.id,
         date: toDateInputValue(new Date()),
         players: getDefaultMatchPlayers(state.players),
+        videoUrl: '',
       };
       state.matchGroups.push(group);
       state.matches.push(match);
@@ -2790,6 +3081,7 @@
         groupId: activeGroup.id,
         date: toDateInputValue(new Date()),
         players: getDefaultMatchPlayers(state.players),
+        videoUrl: '',
       };
       state.matches.push(match);
       state.activeMatchId = match.id;
@@ -2811,6 +3103,7 @@
         groupId: group.id,
         date: toDateInputValue(new Date()),
         players: getDefaultMatchPlayers(state.players),
+        videoUrl: '',
       };
       state.matchGroups = [group];
       state.matches = [match];
@@ -2891,11 +3184,274 @@
       renderRecordView();
     }
 
+    function renderMatchVideo() {
+      const match = getActiveMatch();
+      if (!match) {
+        pendingVideoSeekSeconds = null;
+        mountedVideoKey = '';
+        destroyVideoPlayer();
+        els.videoUrlInput.value = '';
+        els.videoStatus.textContent = '試合を選ぶと動画を表示できます。';
+        els.videoEmbed.innerHTML = renderVideoEmptyState('動画URLを入力するとここに表示されます。');
+        els.clearVideoButton.disabled = true;
+        return;
+      }
+
+      const savedUrl = String(match.videoUrl || '').trim();
+      const video = parseYouTubeUrl(savedUrl);
+      els.videoUrlInput.value = savedUrl;
+      els.clearVideoButton.disabled = !savedUrl;
+
+      if (isLocalFileContext()) {
+        pendingVideoSeekSeconds = null;
+        mountedVideoKey = '';
+        destroyVideoPlayer();
+        if (!savedUrl) {
+          els.videoStatus.innerHTML = 'このHTMLを <code>file://</code> で直接開いているため、YouTube埋め込みは再生できません。<code>python3 -m http.server 8000</code> などで開くと表示できます。';
+          els.videoEmbed.innerHTML = renderVideoEmptyState('ブラウザで http://localhost:8000/ダブルス記録.html を開くと、埋め込み再生できます。');
+          return;
+        }
+
+        if (!video) {
+          els.videoStatus.textContent = '保存されているURLを埋め込めませんでした。YouTubeのURL形式を確認してください。';
+          els.videoEmbed.innerHTML = renderVideoEmptyState('watch?v= や youtu.be のURLを入力してください。');
+          return;
+        }
+
+        els.videoStatus.innerHTML = `このHTMLを <code>file://</code> で直接開いているため、埋め込み再生はできません。<a class="video-link" href="${escapeAttr(video.watchUrl)}" target="_blank" rel="noopener noreferrer">YouTubeで開く</a>`;
+        els.videoEmbed.innerHTML = renderVideoEmptyState('埋め込み表示したい場合は、このフォルダをローカルサーバーで配信してから開いてください。');
+        return;
+      }
+
+      if (!savedUrl) {
+        pendingVideoSeekSeconds = null;
+        mountedVideoKey = '';
+        destroyVideoPlayer();
+        els.videoStatus.textContent = 'YouTubeのURLを入力すると、この試合にひもづけて保存できます。';
+        els.videoEmbed.innerHTML = renderVideoEmptyState('YouTube動画を表示して、見返しながら記録できます。');
+        return;
+      }
+
+      if (!video) {
+        pendingVideoSeekSeconds = null;
+        mountedVideoKey = '';
+        destroyVideoPlayer();
+        els.videoStatus.textContent = '保存されているURLを埋め込めませんでした。YouTubeのURL形式を確認してください。';
+        els.videoEmbed.innerHTML = renderVideoEmptyState('watch?v= や youtu.be のURLを入力してください。');
+        return;
+      }
+
+      els.videoStatus.innerHTML = `この試合に動画を保存しています。<a class="video-link" href="${escapeAttr(video.watchUrl)}" target="_blank" rel="noopener noreferrer">YouTubeで開く</a>`;
+      if (mountedVideoKey !== video.watchUrl || !document.getElementById(VIDEO_PLAYER_IFRAME_ID)) {
+        mountedVideoKey = video.watchUrl;
+        destroyVideoPlayer();
+        els.videoEmbed.innerHTML = `
+          <div class="video-frame">
+            <iframe
+              id="${VIDEO_PLAYER_IFRAME_ID}"
+              src="${escapeAttr(video.embedUrl)}"
+              title="${escapeAttr(`${match.name} のYouTube動画`)}"
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+            ></iframe>
+          </div>
+        `;
+        mountVideoPlayer(video);
+        return;
+      }
+      applyPendingVideoSeek();
+    }
+
+    function renderVideoEmptyState(message) {
+      return `<div class="video-empty">${escapeHtml(message)}</div>`;
+    }
+
+    function saveActiveMatchVideo() {
+      const match = getActiveMatch();
+      if (!match) return;
+      const rawUrl = String(els.videoUrlInput.value || '').trim();
+      if (!rawUrl) {
+        match.videoUrl = '';
+        saveState();
+        renderRecordView();
+        return;
+      }
+      const video = parseYouTubeUrl(rawUrl);
+      if (!video) {
+        alert('YouTubeのURLを入力してください。');
+        els.videoUrlInput.focus();
+        els.videoUrlInput.select();
+        return;
+      }
+      match.videoUrl = video.watchUrl;
+      saveState();
+      renderRecordView();
+    }
+
+    function clearActiveMatchVideo() {
+      const match = getActiveMatch();
+      if (!match) return;
+      match.videoUrl = '';
+      saveState();
+      renderRecordView();
+    }
+
+    function captureReplaySnapshot() {
+      const match = getActiveMatch();
+      const savedUrl = match ? String(match.videoUrl || '').trim() : '';
+      const baseVideo = parseYouTubeUrl(savedUrl);
+      if (!baseVideo) {
+        return {
+          videoUrl: savedUrl,
+          videoSeconds: null,
+          videoSnapshotUrl: '',
+        };
+      }
+
+      const currentSeconds = getCurrentVideoTimeSeconds();
+      if (currentSeconds == null) {
+        return {
+          videoUrl: baseVideo.watchUrl,
+          videoSeconds: null,
+          videoSnapshotUrl: baseVideo.watchUrl,
+        };
+      }
+
+      const targetSeconds = Math.max(0, Math.floor(currentSeconds - VIDEO_REPLAY_OFFSET_SECONDS));
+      const replayVideo = buildYouTubeVideoMeta(baseVideo.videoId, targetSeconds);
+      return {
+        videoUrl: baseVideo.watchUrl,
+        videoSeconds: targetSeconds,
+        videoSnapshotUrl: replayVideo.watchUrl,
+      };
+    }
+
+    function getCurrentVideoTimeSeconds() {
+      if (!youtubePlayer || typeof youtubePlayer.getCurrentTime !== 'function') return null;
+      try {
+        const seconds = youtubePlayer.getCurrentTime();
+        return Number.isFinite(seconds) ? seconds : null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function replayRecordVideo(id) {
+      const record = state.records.find((item) => item.id === id);
+      if (!record) return;
+      const match = state.matches.find((item) => item.id === record.matchId);
+      const targetSeconds = typeof record.videoSeconds === 'number' && Number.isFinite(record.videoSeconds)
+        ? Math.max(0, Math.floor(record.videoSeconds))
+        : null;
+      const matchVideoUrl = match ? String(match.videoUrl || '').trim() : '';
+      const recordVideoUrl = String(record.videoUrl || '').trim();
+
+      if (match && match.groupId !== state.activeGroupId) {
+        state.activeGroupId = match.groupId;
+      }
+      if (match) {
+        state.activeMatchId = match.id;
+      }
+
+      if (match && matchVideoUrl && matchVideoUrl === recordVideoUrl && typeof targetSeconds === 'number') {
+        pendingVideoSeekSeconds = targetSeconds;
+        saveState();
+        renderAll();
+        scrollVideoIntoView();
+        return;
+      }
+      openRecordVideo(id);
+    }
+
+    function openRecordVideo(id) {
+      const record = state.records.find((item) => item.id === id);
+      if (!record) return;
+      const snapshotUrl = String(record.videoSnapshotUrl || '').trim();
+      const fallbackUrl = String(record.videoUrl || '').trim();
+      if (snapshotUrl || fallbackUrl) {
+        window.open(snapshotUrl || fallbackUrl, '_blank', 'noopener');
+      }
+    }
+
+    function mountVideoPlayer(video) {
+      if (!video) return;
+      ensureYouTubeApi();
+      if (!youtubeApiReady || !window.YT || typeof YT.Player !== 'function') {
+        return;
+      }
+      createYouTubePlayer(video);
+    }
+
+    function destroyVideoPlayer() {
+      if (youtubePlayer && typeof youtubePlayer.destroy === 'function') {
+        youtubePlayer.destroy();
+      }
+      youtubePlayer = null;
+    }
+
+    function ensureYouTubeApi() {
+      if (youtubeApiRequested) return;
+      youtubeApiRequested = true;
+      window.onYouTubeIframeAPIReady = () => {
+        youtubeApiReady = true;
+        const match = getActiveMatch();
+        const video = parseYouTubeUrl(match ? match.videoUrl : '');
+        if (video && document.getElementById(VIDEO_PLAYER_IFRAME_ID)) {
+          createYouTubePlayer(video);
+        }
+      };
+      const script = document.createElement('script');
+      script.src = 'https://www.youtube.com/iframe_api';
+      script.async = true;
+      document.head.appendChild(script);
+    }
+
+    function createYouTubePlayer(video) {
+      if (!document.getElementById(VIDEO_PLAYER_IFRAME_ID) || !window.YT || typeof YT.Player !== 'function') return;
+      youtubePlayer = new YT.Player(VIDEO_PLAYER_IFRAME_ID, {
+        events: {
+          onReady: () => {
+            if (typeof pendingVideoSeekSeconds === 'number') {
+              youtubePlayer.seekTo(pendingVideoSeekSeconds, true);
+              pendingVideoSeekSeconds = null;
+              scrollVideoIntoView();
+              return;
+            }
+            if (video.startSeconds > 0) {
+              youtubePlayer.seekTo(video.startSeconds, true);
+            }
+          },
+        },
+      });
+    }
+
+    function applyPendingVideoSeek() {
+      if (typeof pendingVideoSeekSeconds !== 'number' || !youtubePlayer || typeof youtubePlayer.seekTo !== 'function') {
+        return;
+      }
+      try {
+        youtubePlayer.seekTo(pendingVideoSeekSeconds, true);
+        pendingVideoSeekSeconds = null;
+        scrollVideoIntoView();
+      } catch (error) {
+        // Ignore seek failures until the player becomes ready.
+      }
+    }
+
+    function scrollVideoIntoView() {
+      const panel = els.videoEmbed.closest('.video-shell');
+      if (!panel) return;
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
     function addRecord(player, play, result, course = '') {
       const normalizedPlay = normalizePlayName(play);
       const normalizedCourse = normalizeCourseName(normalizedPlay, course, result);
       const needsCourse = getCourseOptions(normalizedPlay, result).length > 0;
       if (!player || !canRecordResult(normalizedPlay, result) || (needsCourse && !normalizedCourse)) return;
+      const replay = captureReplaySnapshot();
       const record = {
         id: makeId('R'),
         matchId: state.activeMatchId,
@@ -2904,6 +3460,9 @@
         play: normalizedPlay,
         result,
         course: normalizedCourse,
+        videoUrl: replay.videoUrl,
+        videoSeconds: replay.videoSeconds,
+        videoSnapshotUrl: replay.videoSnapshotUrl,
       };
       state.records.push(record);
       saveState();
@@ -2928,6 +3487,12 @@
       }
       if (button.dataset.action === 'edit') {
         openEditDialog(id);
+      }
+      if (button.dataset.action === 'replay') {
+        replayRecordVideo(id);
+      }
+      if (button.dataset.action === 'open-video') {
+        openRecordVideo(id);
       }
     }
 
@@ -3065,6 +3630,16 @@
       return buildPairScoresForMatch(getActiveMatch(), records);
     }
 
+    function getScoreAtRecord(targetRecord) {
+      if (!targetRecord || !targetRecord.matchId) return null;
+      const match = state.matches.find((item) => item.id === targetRecord.matchId);
+      if (!match) return null;
+      const records = state.records.filter((record) => record.matchId === targetRecord.matchId);
+      const timeline = buildRecordScoreTimeline(match, records);
+      const index = records.findIndex((record) => record.id === targetRecord.id);
+      return index >= 0 ? timeline[index] || null : null;
+    }
+
     function buildPairScoresForMatch(match, records) {
       const pairs = getPairsForMatch(match);
       const pairA = new Set(pairs.a);
@@ -3175,7 +3750,7 @@
     function exportCsv(groupIndex = -1) {
       const bundle = getGroupBundleByIndex(groupIndex);
       if (!bundle) return;
-      const header = ['グループ', '試合', '時刻', 'プレーヤー', 'プレー', 'コース', '結果', '得点', '失点'];
+      const header = ['グループ', '試合', '時刻', 'プレーヤー', 'プレー', 'コース', '結果', '得点', '失点', '動画秒', '動画URL'];
       const rows = bundle.records.map((record) => {
         const match = bundle.matches.find((item) => item.id === record.matchId);
         const normalized = normalizeRecordClassification(record);
@@ -3191,6 +3766,8 @@
           normalized.result,
           point,
           lost,
+          normalized.videoSeconds ?? '',
+          normalized.videoSnapshotUrl || normalized.videoUrl || '',
         ];
       });
       const csv = [header].concat(rows)
@@ -3296,6 +3873,7 @@
               groupId,
               date: match && match.date ? String(match.date) : toDateInputValue(new Date()),
               players: normalizeMatchPlayers(match ? match.players : [], state.players),
+              videoUrl: match && typeof match.videoUrl === 'string' ? match.videoUrl.trim() : '',
             };
           })
         : [{
@@ -3304,6 +3882,7 @@
             groupId,
             date: toDateInputValue(new Date()),
             players: getDefaultMatchPlayers(state.players),
+            videoUrl: '',
           }];
 
       if (sourceMatches.length === 0) {
@@ -3361,6 +3940,17 @@
       }).format(new Date(value));
     }
 
+    function formatVideoSeekTime(seconds) {
+      const total = Math.max(0, Math.floor(seconds));
+      const hours = Math.floor(total / 3600);
+      const minutes = Math.floor((total % 3600) / 60);
+      const rest = total % 60;
+      if (hours > 0) {
+        return `${hours}:${String(minutes).padStart(2, '0')}:${String(rest).padStart(2, '0')}`;
+      }
+      return `${minutes}:${String(rest).padStart(2, '0')}`;
+    }
+
     function formatDateTime(value) {
       return new Intl.DateTimeFormat('ja-JP', {
         year: 'numeric',
@@ -3412,6 +4002,89 @@
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
       return `${year}-${month}-${day}`;
+    }
+
+    function parseYouTubeUrl(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return null;
+
+      const directId = sanitizeYouTubeVideoId(raw);
+      if (directId) {
+        return buildYouTubeVideoMeta(directId, 0);
+      }
+
+      const normalizedUrl = /^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(raw) ? raw : `https://${raw}`;
+
+      try {
+        const url = new URL(normalizedUrl);
+        const host = url.hostname.replace(/^www\./, '').toLowerCase();
+        const parts = url.pathname.split('/').filter(Boolean);
+        let videoId = '';
+
+        if (host === 'youtu.be') {
+          videoId = parts[0] || '';
+        } else if (host.endsWith('youtube.com')) {
+          if (url.pathname === '/watch') {
+            videoId = url.searchParams.get('v') || '';
+          } else if (['embed', 'shorts', 'live'].includes(parts[0])) {
+            videoId = parts[1] || '';
+          }
+        }
+
+        const sanitizedVideoId = sanitizeYouTubeVideoId(videoId);
+        if (!sanitizedVideoId) return null;
+
+        const startSeconds = Math.max(
+          parseYouTubeStartTime(url.searchParams.get('t')),
+          parseYouTubeStartTime(url.searchParams.get('start'))
+        );
+        return buildYouTubeVideoMeta(sanitizedVideoId, startSeconds);
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function sanitizeYouTubeVideoId(value) {
+      const videoId = String(value || '').trim();
+      return /^[A-Za-z0-9_-]{11}$/.test(videoId) ? videoId : '';
+    }
+
+    function parseYouTubeStartTime(value) {
+      const raw = String(value || '').trim().toLowerCase();
+      if (!raw) return 0;
+      if (/^\d+$/.test(raw)) return Number(raw);
+      const match = raw.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/);
+      if (!match) return 0;
+      const hours = Number(match[1] || 0);
+      const minutes = Number(match[2] || 0);
+      const seconds = Number(match[3] || 0);
+      return (hours * 3600) + (minutes * 60) + seconds;
+    }
+
+    function buildYouTubeVideoMeta(videoId, startSeconds = 0) {
+      const embedParams = new URLSearchParams();
+      embedParams.set('enablejsapi', '1');
+      if (startSeconds > 0) {
+        embedParams.set('start', String(startSeconds));
+      }
+      if (/^https?:$/.test(window.location.protocol)) {
+        embedParams.set('origin', window.location.origin);
+      }
+      const watchParams = new URLSearchParams({ v: videoId });
+      if (startSeconds > 0) {
+        watchParams.set('t', `${startSeconds}s`);
+      }
+      const query = embedParams.toString();
+      return {
+        videoId,
+        startSeconds,
+        embedUrl: `https://www.youtube.com/embed/${videoId}${query ? `?${query}` : ''}`,
+        watchUrl: `https://www.youtube.com/watch?${watchParams.toString()}`,
+      };
+    }
+
+    function isLocalFileContext() {
+      return window.location.protocol === 'file:';
     }
 
     function escapeHtml(value) {
