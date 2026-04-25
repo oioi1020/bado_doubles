@@ -654,6 +654,30 @@
       font-weight: 900;
     }
 
+    .result-pill {
+      min-height: 28px;
+      border-radius: 999px;
+      padding: 4px 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .result-pill.point {
+      color: var(--green);
+      background: var(--green-bg);
+      border: 1px solid #b6e2c8;
+    }
+
+    .result-pill.lost {
+      color: var(--red);
+      background: var(--red-bg);
+      border: 1px solid #f2b8bd;
+    }
+
     .delete {
       color: var(--red);
       background: var(--red-bg);
@@ -1356,6 +1380,7 @@
             <select id="matchSelect"></select>
           </div>
           <button class="icon-button primary" id="addMatchButton" type="button" title="試合を追加" aria-label="試合を追加">+</button>
+          <button class="icon-button danger" id="deleteMatchButton" type="button" title="現在の試合を削除" aria-label="現在の試合を削除">-</button>
         </div>
       </div>
     </header>
@@ -1527,6 +1552,17 @@
     </form>
   </dialog>
 
+  <dialog id="deleteMatchDialog">
+    <div class="dialog-content">
+      <h2>試合を削除</h2>
+      <p class="dialog-copy" id="deleteMatchMessage"></p>
+      <div class="dialog-actions">
+        <button class="text-button plain" id="cancelDeleteMatchButton" type="button">キャンセル</button>
+        <button class="text-button danger" id="confirmDeleteMatchButton" type="button">削除</button>
+      </div>
+    </div>
+  </dialog>
+
   <dialog id="editDialog">
     <form class="dialog-content" id="editForm">
       <h2>記録を修正</h2>
@@ -1655,6 +1691,7 @@
       addGroupButton: document.getElementById('addGroupButton'),
       matchSelect: document.getElementById('matchSelect'),
       addMatchButton: document.getElementById('addMatchButton'),
+      deleteMatchButton: document.getElementById('deleteMatchButton'),
       currentMetrics: document.getElementById('currentMetrics'),
       participantSelectors: document.getElementById('participantSelectors'),
       boardTitle: document.getElementById('boardTitle'),
@@ -1686,6 +1723,10 @@
       matchNameInput: document.getElementById('matchNameInput'),
       cancelMatchButton: document.getElementById('cancelMatchButton'),
       saveMatchButton: document.getElementById('saveMatchButton'),
+      deleteMatchDialog: document.getElementById('deleteMatchDialog'),
+      deleteMatchMessage: document.getElementById('deleteMatchMessage'),
+      cancelDeleteMatchButton: document.getElementById('cancelDeleteMatchButton'),
+      confirmDeleteMatchButton: document.getElementById('confirmDeleteMatchButton'),
       editDialog: document.getElementById('editDialog'),
       editForm: document.getElementById('editForm'),
       editRecordId: document.getElementById('editRecordId'),
@@ -2032,6 +2073,7 @@
         els.matchNameInput.focus();
         els.matchNameInput.select();
       });
+      els.deleteMatchButton.addEventListener('click', openDeleteMatchDialog);
 
       els.groupForm.addEventListener('submit', (event) => {
         event.preventDefault();
@@ -2044,6 +2086,8 @@
         addMatch();
       });
       els.cancelMatchButton.addEventListener('click', () => els.matchDialog.close());
+      els.cancelDeleteMatchButton.addEventListener('click', () => els.deleteMatchDialog.close());
+      els.confirmDeleteMatchButton.addEventListener('click', deleteActiveMatch);
 
       document.querySelectorAll('.tab').forEach((tab) => {
         tab.addEventListener('click', () => switchView(tab.dataset.view));
@@ -2141,6 +2185,7 @@
         .join('');
       els.matchSelect.value = state.activeMatchId;
       els.matchSelect.disabled = matches.length === 0;
+      els.deleteMatchButton.disabled = matches.length <= 1;
     }
 
     function renderStatsScopeSelect() {
@@ -2390,7 +2435,6 @@
               <th>No.</th>
               <th>スコア</th>
               <th>操作</th>
-              <th>時刻</th>
               <th>プレーヤー</th>
               <th>プレー</th>
               <th>結果</th>
@@ -2412,10 +2456,9 @@
                       <button class="mini-button delete" type="button" data-action="delete" data-id="${escapeAttr(record.id)}">削除</button>
                     </div>
                   </td>
-                  <td>${escapeHtml(formatTime(record.timestamp))}</td>
                   <td>${escapeHtml(normalized.player)}</td>
                   <td>${escapeHtml(formatRecordPlay(normalized))}</td>
-                  <td>${escapeHtml(normalized.result)}</td>
+                  <td>${resultPillHtml(normalized.result)}</td>
                   <td>${replayMeta}</td>
                 </tr>
               `;
@@ -2452,6 +2495,11 @@
       const play = normalizePlayName(record.play);
       const course = normalizeCourseName(play, record.course, record.result, true);
       return course ? `${play} / ${course}` : play;
+    }
+
+    function resultPillHtml(result) {
+      const kind = result === '得点' ? 'point' : 'lost';
+      return `<span class="result-pill ${kind}">${escapeHtml(result)}</span>`;
     }
 
     function getRecordReplayMeta(record) {
@@ -3150,6 +3198,7 @@
     function addMatch() {
       const activeGroup = getActiveGroup();
       if (!activeGroup) return;
+      const currentMatch = getActiveMatch();
       const name = els.matchNameInput.value.trim() || `第${getMatchesForActiveGroup().length + 1}試合`;
       const match = {
         id: makeId('M'),
@@ -3157,12 +3206,37 @@
         groupId: activeGroup.id,
         date: toDateInputValue(new Date()),
         players: getDefaultMatchPlayers(state.players),
-        videoUrl: '',
+        videoUrl: currentMatch ? String(currentMatch.videoUrl || '').trim() : '',
       };
       state.matches.push(match);
       state.activeMatchId = match.id;
       saveState();
       els.matchDialog.close();
+      renderAll();
+    }
+
+    function openDeleteMatchDialog() {
+      const match = getActiveMatch();
+      const matches = getMatchesForActiveGroup();
+      if (!match || matches.length <= 1) return;
+      const recordCount = state.records.filter((record) => record.matchId === match.id).length;
+      els.deleteMatchMessage.textContent = `${match.name} を削除します。この試合の記録 ${recordCount} 件も削除されます。実行しますか？`;
+      els.deleteMatchDialog.showModal();
+    }
+
+    function deleteActiveMatch() {
+      const matches = getMatchesForActiveGroup();
+      const match = getActiveMatch();
+      if (!match || matches.length <= 1) return;
+
+      const nextMatch = matches.find((item) => item.id !== match.id) || null;
+      state.matches = state.matches.filter((item) => item.id !== match.id);
+      state.records = state.records.filter((record) => record.matchId !== match.id);
+      state.activeMatchId = nextMatch ? nextMatch.id : '';
+      inputState.player = '';
+      clearClassificationSelection();
+      saveState();
+      els.deleteMatchDialog.close();
       renderAll();
     }
 
