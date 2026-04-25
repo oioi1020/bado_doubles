@@ -1596,8 +1596,8 @@
     const RESULT_LABELS = ['得点', '失点'];
     const PLAY_RESULT_RULES = {};
     const INPUT_MAJOR_PLAYS = DEFAULT_PLAYS.slice();
-    const DEFAULT_POINT_SMALL_OPTIONS = ['角度', '詰まらせるコース', '厳しいコース', '球質', 'ポジショニング', 'ネットぎりぎり', '配球'];
-    const DEFAULT_LOST_SMALL_OPTIONS = ['浮いた', 'アウト', 'ネット', '浅い', '当て損ない', 'ジャッジミス', 'ロングサーブ対応', 'ポジショニング'];
+    const DEFAULT_POINT_SMALL_OPTIONS = ['角度', '詰まらせるコース', '厳しいコース', '球質', 'ポジショニング○', 'ネットぎりぎり', '配球'];
+    const DEFAULT_LOST_SMALL_OPTIONS = ['浮いた', 'アウト', 'ネット', '浅い', '当て損ない', 'ジャッジミス', 'ロングサーブ対応', 'ポジショニング×'];
     let POINT_SMALL_OPTIONS = DEFAULT_POINT_SMALL_OPTIONS.slice();
     let LOST_SMALL_OPTIONS = DEFAULT_LOST_SMALL_OPTIONS.slice();
     const DEPRECATED_PLAYS = new Set([
@@ -1835,10 +1835,16 @@
       return play === 'レシーブ構え' ? 'レシーブ' : play;
     }
 
+    function normalizeReasonName(reason, result = '') {
+      const value = String(reason || '').trim();
+      if (value !== 'ポジショニング') return value;
+      return result === '失点' ? 'ポジショニング×' : 'ポジショニング○';
+    }
+
     function normalizeRecordClassification(record) {
       const result = RESULT_LABELS.includes(record.result) ? record.result : '得点';
       const originalPlay = String(record.play || '').trim();
-      const originalCourse = String(record.course || '').trim();
+      const originalCourse = normalizeReasonName(String(record.course || '').trim(), result);
       let play = normalizePlayName(originalPlay);
       let course = originalCourse;
 
