@@ -1228,6 +1228,17 @@
       font-size: 18px;
     }
 
+    .dialog-copy {
+      margin: 0;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .dialog-copy strong {
+      font-weight: 950;
+    }
+
     .dialog-actions {
       display: flex;
       justify-content: flex-end;
@@ -1540,8 +1551,21 @@
     </form>
   </dialog>
 
+  <dialog id="privacyDialog">
+    <div class="dialog-content">
+      <h2>保存について</h2>
+      <p class="dialog-copy"><strong>記録データはサーバー側には保存されません。</strong></p>
+      <p class="dialog-copy">このアプリで入力した内容は、このブラウザの中にだけ保存されます。</p>
+      <p class="dialog-copy">別の端末や別のブラウザには自動共有されません。必要なときは JSON 書き出しでバックアップしてください。</p>
+      <div class="dialog-actions">
+        <button class="text-button primary" id="closePrivacyButton" type="button">OK</button>
+      </div>
+    </div>
+  </dialog>
+
   <script>
     const STORAGE_KEY = 'badminton-scorebook-html-v1';
+    const PRIVACY_NOTICE_KEY = 'badminton-scorebook-privacy-notice-v1';
     const MATCH_PLAYER_SLOTS = 4;
     const VIDEO_REPLAY_OFFSET_SECONDS = 3;
     const VIDEO_PLAYER_IFRAME_ID = 'videoPlayerFrame';
@@ -1665,6 +1689,8 @@
       clearVideoButton: document.getElementById('clearVideoButton'),
       videoStatus: document.getElementById('videoStatus'),
       videoEmbed: document.getElementById('videoEmbed'),
+      privacyDialog: document.getElementById('privacyDialog'),
+      closePrivacyButton: document.getElementById('closePrivacyButton'),
       cancelEditButton: document.getElementById('cancelEditButton'),
       saveEditButton: document.getElementById('saveEditButton'),
     };
@@ -1674,6 +1700,7 @@
     function init() {
       bindEvents();
       renderAll();
+      maybeShowPrivacyNotice();
     }
 
     function loadState() {
@@ -2034,6 +2061,17 @@
       });
       els.editResult.addEventListener('change', () => renderEditCourseOptions(els.editPlay.value, els.editCourse.value, els.editResult.value));
       els.cancelEditButton.addEventListener('click', () => els.editDialog.close());
+      els.closePrivacyButton.addEventListener('click', closePrivacyNotice);
+    }
+
+    function maybeShowPrivacyNotice() {
+      if (localStorage.getItem(PRIVACY_NOTICE_KEY) === 'seen') return;
+      els.privacyDialog.showModal();
+    }
+
+    function closePrivacyNotice() {
+      localStorage.setItem(PRIVACY_NOTICE_KEY, 'seen');
+      els.privacyDialog.close();
     }
 
     function switchView(viewName) {
